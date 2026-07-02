@@ -461,7 +461,14 @@ void WorldSession::HandleAuctionPlaceBid(WorldPacket& recvData)
         return;
     }
 
-    if (!auction || auction->owner == player->GetGUID())
+    if (!auction)
+    {
+        // auction no longer available
+        SendAuctionCommandResult(0, AUCTION_PLACE_BID, ERR_AUCTION_DATABASE_ERROR);
+        return;
+    }
+
+    if (auction->owner == player->GetGUID())
     {
         //you cannot bid your own auction:
         SendAuctionCommandResult(0, AUCTION_PLACE_BID, ERR_AUCTION_BID_OWN);
